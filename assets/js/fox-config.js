@@ -61,6 +61,11 @@ window.FOX_CONFIG = {
      fondoSelector: true muestra un selector flotante para comparar (solo para revisar). */
   fondo: "chevron",
   fondoSelector: false,
+  /* TIPOGRAFÍA del sitio: "actual" (Martian Mono + Lato), "plex", "manrope", "serif",
+     "funnel", "brygada" o "madefor".
+     tipoSelector: true muestra un selector flotante para comparar (solo para revisar). */
+  tipo: "manrope",
+  tipoSelector: false,
   /* INTRO de entrada: pantalla naranja con el logo animado (unos 3,5 s), una vez por visita.
      false = el sitio abre directo, sin intro. */
   intro: {
@@ -73,9 +78,12 @@ window.FOX_CONFIG = {
   }
 };
 
-/* Aplica el fondo elegido antes de pintar la página (no tocar). */
+/* Aplica el fondo y la tipografía elegidos antes de pintar la página (no tocar). */
 (function (d) {
   var c = window.FOX_CONFIG || {}, f = c.fondo || "actual";
   if (c.fondoSelector) { try { f = localStorage.getItem("foxFondo") || f; } catch (e) {} }
   d.setAttribute("data-fondo", f);
+  var t = c.tipo || "actual";
+  if (c.tipoSelector) { try { t = localStorage.getItem("foxTipo") || t; } catch (e) {} }
+  d.setAttribute("data-tipo", t);
 })(document.documentElement);

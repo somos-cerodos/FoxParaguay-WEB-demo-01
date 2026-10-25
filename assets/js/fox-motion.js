@@ -736,4 +736,21 @@
       apply(mode());
     }
   })();
+
+  /* ---------- Selector de tipografía (solo para revisar) ---------- */
+  (function () {
+    var cfg = window.FOX_CONFIG || {};
+    if (!cfg.tipoSelector) return;
+    var OPTS = [["actual", "Actual"], ["manrope", "Manrope"], ["funnel", "Funnel"], ["brygada", "Brygada"], ["madefor", "Madefor"]];
+    var sel = document.createElement("div"); sel.className = "fp-sel fp-sel-t"; sel.setAttribute("role", "group"); sel.setAttribute("aria-label", "Probar tipografía");
+    sel.innerHTML = "<span>Tipografía</span>" + OPTS.map(function (o) { return '<button type="button" data-t="' + o[0] + '" aria-pressed="false">' + o[1] + "</button>"; }).join("");
+    document.body.appendChild(sel);
+    function apply(t) {
+      doc.setAttribute("data-tipo", t);
+      try { localStorage.setItem("foxTipo", t); } catch (e) {}
+      $$(".fp-sel-t button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-t") === t ? "true" : "false"); });
+    }
+    sel.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) apply(b.getAttribute("data-t")); });
+    apply(doc.getAttribute("data-tipo") || "actual");
+  })();
 })();
