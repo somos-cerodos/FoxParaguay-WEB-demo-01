@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /leads-demo/
+
+Sitemap: https://foxparaguay.com.py/sitemap.xml
