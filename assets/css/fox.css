@@ -1,4 +1,5 @@
-/* FoxParaguay · hoja de estilos única, mobile first (corte principal en 900px).
+/* Chat de atencion embebido (Contacto): sin el desplazamiento del panel flotante */
+.chatp.inline{inset:auto!important}/* FoxParaguay · hoja de estilos única, mobile first (corte principal en 900px).
    Tokens en :root. Ver README.txt, CONVENCIONES. */
 /* Inicio demo FoxParaguay. Direccion Recibo (ticket termico) + carteles de Senal para el rubro + paleta de contraste de A + marco de capturas de B.
    Mobile first (390 px), una sola apariencia clara. Tokens: */
