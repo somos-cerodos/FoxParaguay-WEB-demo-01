@@ -57,6 +57,11 @@ window.FOX_CONFIG = {
     veterfox: "",
     motorfox: ""
   },
+  /* INTRO de entrada: pantalla naranja con el logo animado (unos 3,5 s), una vez por visita.
+     false = el sitio abre directo, sin intro. */
+  intro: {
+    activa: true
+  },
   tienda: {
     /* URL que recibe cada pedido del carrito en JSON (por ejemplo, para crear el cobro
        en una pasarela de pago). Vacío = el pedido se guarda en el panel y se envía por WhatsApp. */

@@ -2341,3 +2341,17 @@ section.ln[id]{scroll-margin-top:80px}
   .chat i{background:var(--fox) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%231E1B18' stroke-width='1.9' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M4 4.5h16v11.5H9.5L4 20.5z'/%3E%3Cpath d='M8 9h8M8 12.5h5'/%3E%3C/svg%3E") center/24px no-repeat}
 }
 
+/* ==== Etapa 31: intro de entrada (propuesta B, bloque naranja) ==== */
+/* Mientras carga el script, una pantalla naranja tapa el sitio para que no se vea un parpadeo. */
+html.fx-intro{overflow:hidden}
+html.fx-intro:not(.fx-intro-on)::before{content:"";position:fixed;inset:0;z-index:9999;background:#FF931E}
+.fxi{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;background:#FF931E;cursor:pointer;will-change:transform}
+.fxi-lk{width:min(62vw,820px);height:auto;overflow:visible;display:block}
+.fxi-lk path,.fxi-lk rect{fill:#fff;transform-box:fill-box;transform-origin:center}
+.fxi-lk .ln.l{transform-origin:right center}.fxi-lk .ln.r{transform-origin:left center}
+.fxi-skip{position:absolute;right:max(18px,env(safe-area-inset-right,0px));bottom:calc(18px + env(safe-area-inset-bottom,0px));font:600 .7rem/1 var(--mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;background:transparent;border:1px solid rgba(255,255,255,.8);color:#fff;padding:10px 12px;cursor:pointer}
+.fxi-skip:hover{background:#fff;color:#B85E00}
+.fxi-skip:focus-visible{outline:2px solid #fff;outline-offset:3px}
+@media (max-width:640px){.fxi-lk{width:86vw}}
+@media print{.fxi{display:none}}
+

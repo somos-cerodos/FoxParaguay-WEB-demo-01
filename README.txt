@@ -295,3 +295,15 @@ PUBLICACIÓN
 No hay build: lo que está en la carpeta es lo que se publica. Sirve
 cualquier hosting estático. Antes de publicar, cargar fox-config.js y
 quitar el enlace "Panel de pedidos (solo demo)" del pie.
+
+
+INTRO DE ENTRADA
+----------------
+Al entrar al sitio aparece una pantalla naranja con el logo y la frase
+"A la medida de su empresa" animados (unos 3,5 s). Sale una sola vez por
+visita (si se navega entre páginas no vuelve a salir), se salta con el
+botón Saltar, un clic o Esc, y no aparece en el panel de pedidos.
+Archivos: assets/js/fox-intro.js (logo en vector, letra por letra) y los
+estilos al final de assets/css/fox.css. Para apagarla: fox-config.js →
+intro.activa = false. Para volver a verla en la misma visita: cerrar la
+pestaña y abrir el sitio de nuevo.

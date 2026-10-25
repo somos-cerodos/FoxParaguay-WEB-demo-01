@@ -21,7 +21,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Martian+Mono:wdth,wght@75..112.5,400..800&family=Lato:wght@400;700;900&display=swap">
-<link rel="stylesheet" href="../assets/css/fox.css?v=2026102533">
+<link rel="stylesheet" href="../assets/css/fox.css?v=2026102534">
+<script src="../assets/js/fox-config.js?v=2026102534"></script>
+<script>/* Intro: se decide antes de pintar para que el sitio no parpadee. */
+(function(d){try{var c=window.FOX_CONFIG&&FOX_CONFIG.intro;if(c&&c.activa===false)return;if(sessionStorage.getItem("foxIntro"))return;d.classList.add("fx-intro")}catch(e){}})(document.documentElement);</script>
+<script src="../assets/js/fox-intro.js?v=2026102534" defer></script>
 <script>/* Animaciones de entrada: solo si el sistema no pidió menos movimiento. Red de seguridad a los 3,5 s. */
 (function(d){if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;d.classList.add("mo");setTimeout(function(){d.classList.add("mo-done")},3500)})(document.documentElement);</script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "LocalBusiness", "@id": "https://foxparaguay.com.py/#negocio", "name": "FoxParaguay S.R.L.", "url": "https://foxparaguay.com.py/", "logo": "https://foxparaguay.com.py/assets/img/logo/foxparaguay-color.png", "image": "https://foxparaguay.com.py/assets/img/og-foxparaguay.jpg", "telephone": "+595984112789", "email": "foxparaguay@foxparaguay.com.py", "foundingDate": "2004", "address": {"@type": "PostalAddress", "streetAddress": "Dr. Mendez Paiva 1825 casi Nazareth", "addressLocality": "Asunción", "addressCountry": "PY"}, "openingHoursSpecification": [{"@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"], "opens": "09:00", "closes": "18:00"}]}]}</script>
@@ -193,9 +197,8 @@
 </div>
 <button class="chat" type="button" id="chat-open" aria-label="Abrir chat con el asistente"><i><span class="chev"></span></i><span id="chat-lbl">¿Me toca facturar?</span></button>
 <a class="wa-float" data-whatsapp="ventas" href="../soporte/index.html" aria-label="Escribinos por WhatsApp" title="WhatsApp ventas"><svg viewBox="0 0 32 32" width="24" height="24" aria-hidden="true" focusable="false"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M26.7 5.3a14 14 0 0 0-22 16.6L2.8 29l7.3-1.9A14 14 0 0 0 26.7 5.3Z"/><path fill="currentColor" d="M11.3 8.7c-.3-.7-.6-.7-.9-.7h-.8c-.3 0-.8.1-1.2.6-.4.5-1.5 1.5-1.5 3.6s1.5 4.1 1.7 4.4c.2.3 3 4.7 7.4 6.4 3.7 1.5 4.4 1.2 5.2 1.1.8-.1 2.6-1.1 3-2.1.4-1 .4-1.9.3-2.1-.1-.2-.4-.3-.9-.5l-3-1.4c-.4-.2-.7-.3-1 .2-.3.5-1.1 1.4-1.4 1.7-.3.3-.5.3-1 .1-.5-.2-2-.7-3.7-2.3-1.4-1.2-2.3-2.7-2.5-3.2-.3-.5 0-.7.2-.9l.7-.8c.2-.3.3-.5.4-.8.2-.3.1-.6 0-.8l-1.1-2.5Z"/></svg></a>
-<script src="../assets/js/fox-config.js?v=2026102533"></script>
-<script src="../assets/js/fox.js?v=2026102533"></script>
-<script src="../assets/js/cart.js?v=2026102533"></script>
-<script src="../assets/js/fox-motion.js?v=2026102533"></script>
+<script src="../assets/js/fox.js?v=2026102534"></script>
+<script src="../assets/js/cart.js?v=2026102534"></script>
+<script src="../assets/js/fox-motion.js?v=2026102534"></script>
 </body>
 </html>
