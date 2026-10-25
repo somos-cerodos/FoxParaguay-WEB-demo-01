@@ -73,7 +73,7 @@
         }
       }
     }
-    function loop(now) { if (!running) return; if (now - last > 30) { draw(now); last = now; } raf = requestAnimationFrame(loop); }
+    function loop(now) { if (!running) return; if (page && (doc.getAttribute("data-fondo") || "actual") !== "actual") { raf = requestAnimationFrame(loop); return; } if (now - last > 30) { draw(now); last = now; } raf = requestAnimationFrame(loop); }
     function start() { if (running || REDUCED || !visible || document.hidden) return; running = true; raf = requestAnimationFrame(loop); }
     function stop() { running = false; cancelAnimationFrame(raf); }
     if (page) { visible = true; start(); }
@@ -616,5 +616,124 @@
     new IntersectionObserver(function (es) { es[0].isIntersecting ? start() : stop(); }).observe(cv);
     var rt; window.addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(size, 150); });
     document.addEventListener("visibilitychange", function () { document.hidden ? stop() : start(); });
+  })();
+
+  /* ---------- Fondos alternativos (en prueba) ----------
+     html[data-fondo] = "actual" | "grafito" | "naranja" | "chevron".
+     Se elige en fox-config.js → fondo. Con fondoSelector: true aparece un selector
+     flotante para compararlos en vivo (la elección se recuerda en este navegador). */
+  (function () {
+    var host = document.querySelector(".pagebg");
+    if (!host) return;
+    var cv = document.createElement("canvas"); cv.className = "fp-cv"; cv.setAttribute("aria-hidden", "true");
+    var blobs = document.createElement("div"); blobs.className = "fp-blobs"; blobs.setAttribute("aria-hidden", "true");
+    blobs.innerHTML = "<i></i><i></i><i></i><i></i>";
+    var grain = document.createElement("div"); grain.className = "fp-grain"; grain.setAttribute("aria-hidden", "true");
+    host.appendChild(blobs); host.appendChild(cv); host.appendChild(grain);
+    var ctx = cv.getContext("2d"), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0, raf = 0, running = false, last = 0, t0 = performance.now();
+    var mx = -9999, my = -9999, mxs = -9999, mys = -9999;
+    function mode() { return doc.getAttribute("data-fondo") || "actual"; }
+    function size() {
+      W = Math.max(1, innerWidth); H = Math.max(1, host.getBoundingClientRect().height || innerHeight);
+      cv.width = W * dpr; cv.height = H * dpr; cv.style.width = W + "px"; cv.style.height = H + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); draw(performance.now());
+    }
+    /* Grafito y naranja: la misma tela de líneas del sitio, en claro */
+    function hgt(x, z, t) {
+      return Math.sin(x * 0.0062 + t * 0.32 + z * 2.1) * 0.55 + Math.sin(x * 0.0115 - t * 0.21 + z * 3.7) * 0.3 + Math.sin(x * 0.0029 + t * 0.12 - z * 1.3) * 0.75;
+    }
+    function lines(t, ink, aBase, aGain, accentRGB, glow, n) {
+      var N = n, STEP = W < 640 ? 10 : 14, top = H * 0.1, span = H * 0.98;
+      for (var i = 0; i < N; i++) {
+        var z = i / (N - 1), pz = Math.pow(z, 1.65), y0 = top + pz * span;
+        var amp = Math.min(70, H * 0.075) * (0.25 + z * 0.95), accent = accentRGB && i % 9 === 4;
+        ctx.beginPath();
+        for (var x = -20; x <= W + 20; x += STEP) { var y = y0 + hgt(x, z, t) * amp; x === -20 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+        var a = aBase + z * aGain;
+        ctx.lineWidth = accent ? 1.5 : 1;
+        ctx.strokeStyle = "rgba(" + (accent ? accentRGB : ink) + "," + (accent ? Math.min(0.85, a * 3.4) : a) + ")";
+        ctx.stroke();
+        if (accent && glow && !REDUCED) {
+          var gx = ((t * 120 + i * 260) % (W + 400)) - 200, gy = y0 + hgt(gx, z, t) * amp;
+          var g = ctx.createRadialGradient(gx, gy, 0, gx, gy, 110);
+          g.addColorStop(0, "rgba(" + accentRGB + ",.9)"); g.addColorStop(1, "rgba(" + accentRGB + ",0)");
+          ctx.save(); ctx.globalCompositeOperation = "lighter"; ctx.strokeStyle = g; ctx.lineWidth = 2.6; ctx.beginPath();
+          for (var x2 = gx - 110; x2 <= gx + 110; x2 += 6) { var y2 = y0 + hgt(x2, z, t) * amp; x2 === gx - 110 ? ctx.moveTo(x2, y2) : ctx.lineTo(x2, y2); }
+          ctx.stroke(); ctx.restore();
+        }
+      }
+    }
+    /* Chevron: grilla de flechas de la marca. Una ola diagonal las enciende en naranja
+       y empujan hacia adelante; en escritorio también responden al cursor. */
+    function chevrons(t) {
+      /* Trama fina: flechas chicas en reposo (un gris frío luminoso, todas en un solo trazo),
+         una ola diagonal que las enciende de naranja a ámbar con un halo, una segunda ola
+         más lenta y tenue, destellos sueltos y, en escritorio, el cursor. */
+      var G = W < 640 ? 21 : 25, s = G * 0.19, cols = Math.ceil(W / G) + 2, rows = Math.ceil(H / G) + 2;
+      mxs += (mx - mxs) * 0.12; mys += (my - mys) * 0.12;
+      ctx.lineCap = "round"; ctx.lineJoin = "round";
+      var lit = [];
+      ctx.beginPath();
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var x = c * G + (r % 2 ? G / 2 : 0) - G / 2, y = r * G - G / 2;
+          var w1 = Math.sin((x * 0.7 + y) * 0.0058 - t * 0.85);
+          var w2 = Math.sin((x - y * 0.6) * 0.0031 + t * 0.37);
+          var wave = (w1 > 0.7 ? (w1 - 0.7) / 0.3 : 0) + (w2 > 0.9 ? (w2 - 0.9) / 0.1 * 0.45 : 0);
+          var h = Math.sin(r * 127.1 + c * 311.7) * 43758.5453; h = h - Math.floor(h);
+          var tw = Math.sin(t * 0.9 + h * 40); tw = tw > 0.985 ? (tw - 0.985) / 0.015 : 0;
+          var d = Math.hypot(x - mxs, y - mys), near = d < 170 ? 1 - d / 170 : 0;
+          var k = Math.min(1, wave * 0.8 + near * near * 1.15 + tw * 0.9);
+          if (k > 0.03) { lit.push(x, y, k); continue; }
+          ctx.moveTo(x - s * 0.55, y - s); ctx.lineTo(x + s * 0.45, y); ctx.lineTo(x - s * 0.55, y + s);
+        }
+      }
+      ctx.lineWidth = 1.25; ctx.strokeStyle = "rgba(196,206,224,.17)"; ctx.stroke();
+      ctx.save(); ctx.globalCompositeOperation = "lighter";
+      for (var i = 0; i < lit.length; i += 3) {
+        var lx = lit[i], ly = lit[i + 1], lk = lit[i + 2], push = lk * s * 0.8;
+        var gC = Math.round(120 + lk * 75), bC = Math.round(40 + (1 - lk) * 60);
+        ctx.beginPath();
+        ctx.moveTo(lx - s * 0.55 + push, ly - s); ctx.lineTo(lx + s * 0.45 + push, ly); ctx.lineTo(lx - s * 0.55 + push, ly + s);
+        if (lk > 0.2) { ctx.lineWidth = 5 + lk * 3; ctx.strokeStyle = "rgba(255,140,30," + (lk * 0.16) + ")"; ctx.stroke(); }
+        ctx.lineWidth = 1.3 + lk * 0.9; ctx.strokeStyle = "rgba(255," + gC + "," + bC + "," + (0.25 + lk * 0.75) + ")"; ctx.stroke();
+      }
+      ctx.restore();
+    }
+    function draw(now) {
+      var m = mode(), t = (now - t0) / 1000;
+      ctx.clearRect(0, 0, W, H);
+      if (m === "grafito") lines(t, "255,255,255", 0.035, 0.13, "255,147,30", true, 44);
+      else if (m === "naranja") lines(t, "255,255,255", 0.06, 0.2, null, false, 30);
+      else if (m === "chevron") chevrons(t);
+    }
+    function loop(now) {
+      if (!running) return;
+      if (now - last > 32) { draw(now); last = now; }
+      raf = requestAnimationFrame(loop);
+    }
+    function start() { if (running || document.hidden || mode() === "actual") return; running = true; raf = requestAnimationFrame(loop); }
+    function stop() { running = false; cancelAnimationFrame(raf); }
+    function apply(m) {
+      doc.setAttribute("data-fondo", m);
+      try { localStorage.setItem("foxFondo", m); } catch (e) {}
+      stop(); size(); if (!REDUCED) start();
+      $$(".fp-sel button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-f") === m ? "true" : "false"); });
+    }
+    if (FINE) addEventListener("pointermove", function (e) { mx = e.clientX; my = e.clientY; if (mxs < -999) { mxs = mx; mys = my; } }, { passive: true });
+    document.addEventListener("visibilitychange", function () { document.hidden ? stop() : start(); });
+    var rt; addEventListener("resize", function () { clearTimeout(rt); rt = setTimeout(size, 150); });
+    size(); if (!REDUCED) start();
+    /* Selector flotante (solo para comparar) */
+    var cfg = window.FOX_CONFIG || {};
+    if (cfg.fondoSelector) {
+      var OPTS = [["actual", "Actual"], ["grafito", "A · Grafito"], ["naranja", "B · Naranja"], ["chevron", "C · Flechas"]];
+      var sel = document.createElement("div"); sel.className = "fp-sel"; sel.setAttribute("role", "group"); sel.setAttribute("aria-label", "Probar fondo");
+      sel.innerHTML = "<span>Fondo</span>" + OPTS.map(function (o) { return '<button type="button" data-f="' + o[0] + '" aria-pressed="false">' + o[1] + "</button>"; }).join("");
+      document.body.appendChild(sel);
+      sel.addEventListener("click", function (e) { var b = e.target.closest("button"); if (b) apply(b.getAttribute("data-f")); });
+      apply(mode());
+    }
   })();
 })();

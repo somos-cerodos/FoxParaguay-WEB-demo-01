@@ -57,6 +57,10 @@ window.FOX_CONFIG = {
     veterfox: "",
     motorfox: ""
   },
+  /* FONDO del sitio: "actual" (papel con líneas), "grafito", "naranja" o "chevron".
+     fondoSelector: true muestra un selector flotante para comparar (solo para revisar). */
+  fondo: "chevron",
+  fondoSelector: false,
   /* INTRO de entrada: pantalla naranja con el logo animado (unos 3,5 s), una vez por visita.
      false = el sitio abre directo, sin intro. */
   intro: {
@@ -68,3 +72,10 @@ window.FOX_CONFIG = {
     checkoutEndpoint: ""
   }
 };
+
+/* Aplica el fondo elegido antes de pintar la página (no tocar). */
+(function (d) {
+  var c = window.FOX_CONFIG || {}, f = c.fondo || "actual";
+  if (c.fondoSelector) { try { f = localStorage.getItem("foxFondo") || f; } catch (e) {} }
+  d.setAttribute("data-fondo", f);
+})(document.documentElement);
